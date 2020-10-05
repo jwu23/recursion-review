@@ -6,5 +6,8 @@
     "start": "npx live-server"
   },
   "author": "Hack Reactor <curriculum.team@hackreactor.com>",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "eslint-plugin-mocha": "^8.0.0"
+  }
 }
