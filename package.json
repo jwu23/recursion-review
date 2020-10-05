@@ -9,5 +9,8 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "eslint-plugin-mocha": "^8.0.0"
+  },
+  "dependencies": {
+    "live-server": "^1.2.1"
   }
 }
