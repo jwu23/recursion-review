@@ -18,24 +18,33 @@ var parseJSON = function (json) {
     var quotes = 0;
     var bracket = 0;
     var brace = 0;
+    var escaped = false;
     for (var i = 0; i < str.length; i++) {
-      if (str[i] === '"') {
+      var curr = str[i];
+      if (curr === '"') {
         quotes++;
-      } else if (str[i] === '[') {
+      } else if (curr === '[') {
         bracket++;
-      } else if (str[i] === '{') {
+      } else if (curr === '{') {
         brace++;
-      } else if (str[i] === ']') {
+      } else if (curr === ']') {
         bracket--;
-      } else if (str[i] === '}') {
+      } else if (curr === '}') {
         brace--;
+      } else if (curr === '\\' && escaped === false) {
+        escaped = true;
+        continue;
       }
 
-      if (quotes % 2 === 0 && bracket === 0 && brace === 0 && str[i] === char) {
+      if (escaped === true) {
+        escaped = false;
+      }
+
+      if (quotes % 2 === 0 && bracket === 0 && brace === 0 && curr === char) {
         result.push(word.trim());
         word = '';
       } else {
-        word += str[i];
+        word += curr;
       }
     }
 
@@ -49,6 +58,13 @@ var parseJSON = function (json) {
     if (json === '[]') {
       return [];
     }
+    json =json.slice(1, -1);
+    var splitVal = splitByChar(',', json);
+    var result = [];
+    for (var i = 0; i < splitVal.length; i++) {
+      result.push(parseJSON(splitVal[i]));
+    }
+    return result;
   }
   // '{"foo": true, "bar": false, "baz": null}'
   // ['"foo": true', '"bar": false', '"baz": null']
@@ -62,8 +78,7 @@ var parseJSON = function (json) {
     var result = {};
     for (var i = 0; i < splitVal.length; i++) {
       var temp = splitByChar(':', splitVal[i]);
-      console.log(temp);
-      result[temp[0].slice(1, -1)] = parseJSON(temp[1].slice(1, -1));
+      result[temp[0].slice(1, -1)] = parseJSON(temp[1]);
     }
     return result;
   }
@@ -78,6 +93,9 @@ var parseJSON = function (json) {
   }
   if (json === '') {
     return '';
+  }
+  if (json[0] === '"') {
+    return json.slice(1, -1);
   }
   return Number(json);
 };
